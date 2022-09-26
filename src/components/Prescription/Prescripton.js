@@ -50,7 +50,7 @@ function Prescripton() {
     event.preventDefault();
     // console.log(med1Name, med1Dose, med1Time);
     const profession = JSON.parse(localStorage.getItem("docProfession"));
-    // const phoneNo = JSON.parse(localStorage.getItem("docPhoneNo"));
+    const phoneNo = JSON.parse(localStorage.getItem("docPhoneNo"));
     
     axios
       .post("https://hellosign-backend.herokuapp.com/sendform", {
@@ -60,7 +60,7 @@ function Prescripton() {
         PatientAge:pAge,
         DoctorName: docName,
         DoctorInfo: profession,
-        // DoctorNo: phoneNo,
+        DoctorNo: phoneNo,
         DoctorEmail: docEmail,
         Medication: [
           [med1Name, med1Dose, med1Time],
