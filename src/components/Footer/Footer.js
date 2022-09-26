@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -21,9 +22,9 @@ function Footer() {
             className="text-gray-700 hover:text-gray-900 font-medium block text-sm"
             target="_blank"
             rel="noreferrer"
-            href="#"
+            href="https://www.linkedin.com/in/subhanu-sankar-roy/"
           >
-            About Us
+            Subhanu's LinkedIN
           </a>
         </li>
         <li className="mr-6">
@@ -31,30 +32,18 @@ function Footer() {
             className="text-gray-700 hover:text-gray-900 font-medium block text-sm"
             target="_blank"
             rel="noreferrer"
-            href="#"
+            href="https://www.linkedin.com/in/chethan-reddy-0201791ba/"
           >
-            Blog
+            Chethan's LinkedIN
           </a>
         </li>
         <li className="mr-6">
-          <a
+          <Link
             className="text-gray-700 hover:text-gray-900 font-medium block text-sm"
-            target="_blank"
-            rel="noreferrer"
-            href="#"
+            to="/"
           >
-            MIT License
-          </a>
-        </li>
-        <li>
-          <a
-            className="text-gray-700 hover:text-gray-900 font-medium block text-sm"
-            target="_blank"
-            rel="noreferrer"
-            href="#"
-          >
-            Contact Us
-          </a>
+            Home
+          </Link>
         </li>
       </ul>
     </footer>

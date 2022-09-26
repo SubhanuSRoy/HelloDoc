@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 function Prescripton() {
-  
+  const navigate = useNavigate();
 
   const [docName, setdocName] = useState("Dr. Devi Shetty");
   const [docEmail, setdocEmail] = useState("shetty.devi@gmail.com");
-  const [pName, setpName] = useState("Chethan Reddy");
-  const [pEmail, setpEmail] = useState("aChethanReddy@gmail.com");
+  const [pName, setpName] = useState("");
+  const [pEmail, setpEmail] = useState("");
+  const [pGender, setpGender] = useState("");
+  const [pAge, setpAge] = useState(0);
   const [noOfMeds, setnoOfMeds] = useState(2);
 
   const [med1Name, setmed1Name] = useState("");
@@ -22,6 +25,8 @@ function Prescripton() {
   const [med3Name, setmed3Name] = useState("");
   const [med3Dose, setmed3Dose] = useState("");
   const [med3Time, setmed3Time] = useState("");
+
+  const [info, setinfo] = useState("");
   const [med, setmed] = useState([]);
   const [medication, setmedication] = useState([]);
 
@@ -43,41 +48,56 @@ function Prescripton() {
   };
   const onPrescribe = (event) => {
     event.preventDefault();
-    console.log(med1Name, med1Dose, med1Time);
+    // console.log(med1Name, med1Dose, med1Time);
+    const profession = JSON.parse(localStorage.getItem("docProfession"));
+    const phoneNo = JSON.parse(localStorage.getItem("docPhoneNo"));
+    
     axios
       .post("https://hellosign-backend.herokuapp.com/sendform", {
         PatientName: pName,
         PatientEmail: pEmail,
+        PatientGender:pGender,
+        PatientAge:pAge,
         DoctorName: docName,
-        DoctorInfo: "static info",
-        DoctorNo: "1234657980",
+        DoctorInfo: profession,
+        DoctorNo: phoneNo,
         DoctorEmail: docEmail,
         Medication: [
           [med1Name, med1Dose, med1Time],
           [med2Name, med2Dose, med2Time],
           [med3Name, med3Dose, med3Time],
         ],
-        AdditionalInfo:"wiejcweijc"
+        AdditionalInfo: info,
       })
       .then((response) => {
-        console.log("data status", response);
+        console.log("data status", response.data.Status);
+        if(response.data.Status=="True")
+        {
+          navigate("/sucess")
+        }
       })
       .catch((error) => {
         console.log(error.message);
-      })
+      });
     // setData(data)
   };
+
+  useEffect(() => {
+    setdocName(JSON.parse(localStorage.getItem("docName")));
+    setdocEmail(JSON.parse(localStorage.getItem("docEmail")));
+    
+  }, []);
 
   return (
     <div className="bg-blue-500 w-full overflow-hidden flex items-center justify-center">
       <div className="flex items-center justify-end w-full  ">
-        <div class="m-4 mt-2 rounded-md p-5 md:w-4/5 w-full bg-white">
+        <div class="m-12 mt-2 mb-2 rounded-md p-5 w-full bg-white">
           <div class="text-center mb-4">
             <p class="text-sm leading-7 text-gray-500 font-regular uppercase">
               Write a prescription
             </p>
             <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-              Hello <span class="text-indigo-600">Doctor!</span>
+              Hello <span class="text-indigo-600">{docName.toUpperCase()}</span>
             </h3>
           </div>
 
@@ -96,9 +116,6 @@ function Prescripton() {
                   type="text"
                   placeholder="Your name"
                   value={docName}
-                  onChange={(e) => {
-                    setdocName(e.target.value);
-                  }}
                 />
                 {/* <p class="text-red-500 text-xs italic">
                   Please fill out this field.
@@ -117,9 +134,6 @@ function Prescripton() {
                   type="email"
                   placeholder="Your Email"
                   value={docEmail}
-                  onChange={(e) => {
-                    setdocEmail(e.target.value);
-                  }}
                 />
               </div>
             </div>
@@ -137,7 +151,7 @@ function Prescripton() {
                   type="text"
                   value={pName}
                   onChange={(e) => {
-                    setpName(e.target.value);
+                    setpName(e.target.value.toUpperCase());
                   }}
 
                   // placeholder="Dr. Devi Shetty"
@@ -178,6 +192,10 @@ function Prescripton() {
                   class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   id="grid-email"
                   type="number"
+                  value={pAge}
+                  onChange={(e) => {
+                    setpAge(e.target.value);
+                  }}
                 />
               </div>
               <div class="w-full md:w-1/2 px-3">
@@ -185,12 +203,15 @@ function Prescripton() {
                   class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   for="grid-password"
                 >
-                  Date
+                  Gender
                 </label>
                 <input
                   class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  id="grid-email"
-                  type="date"
+                  type="text"
+                  value={pGender}
+                  onChange={(e) => {
+                    setpGender(e.target.value);
+                  }}
                 />
               </div>
             </div>
@@ -307,11 +328,26 @@ function Prescripton() {
                   />
                 </div>
               </div>
+              <div className="flex flex-wrap mb-62 w-full ml-2">
+                <label
+                  class="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  for="grid-password"
+                >
+                  Additional Info
+                </label>
+                <textarea
+                  value={info}
+                  onChange={(e) => {
+                    setinfo(e.target.value);
+                  }}
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mr-2 mb-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                ></textarea>
+              </div>
               <div class="flex justify-between w-full px-3">
                 <div class="md:flex md:items-center">
                   <label class="block text-gray-500 font-bold">
                     <input class="mr-2 leading-tight" type="checkbox" />
-                    <span class="text-sm">Send me your newsletter!</span>
+                    <span class="text-sm">Agree to terms and conditions</span>
                   </label>
                 </div>
                 <button
